@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navegador del Ecosistema de Innovación de Uruguay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#1E3A8A;
+    --primary-tint:#EFF6FF;
+    --primary-border:#BFDBFE;
+    --accent:#D97706;
+    --slate-bg:#F8FAFC;
+    --ink:#0F172A;
+    --muted:#64748B;
+    --line:#E2E8F0;
+    --white:#FFFFFF;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+  }
+  
+  *{box-sizing:border-box;}
+  
+  body{
+    margin:0; 
+    background:var(--slate-bg); 
+    color:var(--ink);
+    font-family: "Inter", -apple-system, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height: 1.45;
+  }
+
+  header{
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    background: var(--white);
+  }
+  .header-content{
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  header .header-subtitle{ font-size:13px; color:var(--muted); margin-top:2px; }
+  .eyebrow{
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--primary);
+    font-weight: 700;
+  }
+  header h1{
+    margin: 2px 0 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  .wrap{ max-width:1120px; margin:0 auto; padding:20px 24px 40px;}
+
+  /* CONTROLES MODO DE VISTA */
+  .modo-switch{
+    padding: 4px;
+    background: #E2E8F0;
+    border-radius: 8px;
+    display: inline-flex;
+  }
+  .modo-btn{
+    padding: 7px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--muted);
+    transition: all .15s ease;
+  }
+  .modo-btn.active{
+    background: var(--white);
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* TOOLBAR DE FILTROS Y TABS */
+  .control-toolbar{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: var(--white);
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+  }
+
+  .cat-tabs{
+    display:inline-flex; gap:3px; padding:3px;
+    background:#E2E8F0; border-radius:7px;
+  }
+  .cat-tab{
+    background:none; border:none; cursor:pointer;
+    padding:6px 12px; font-size:12px; font-weight:500;
+    color:var(--muted); border-radius:5px; transition:all .15s ease;
+  }
+  .cat-tab.active{ background:var(--white); color:var(--primary); font-weight:800; font-size:13.5px; box-shadow: var(--shadow-sm); }
+
+  .filters{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .filters input[type=text], .filters select{
+    padding:6px 10px; border:1px solid var(--line);
+    border-radius:6px; font-size:12px; background:white; color:var(--ink);
+    outline: none;
+  }
+  .filters input[type=text]:focus, .filters select:focus { border-color: var(--primary); }
+  .count-pill{ font-size:12px; color:var(--muted); font-weight: 700; padding-left: 4px; }
+
+  /* STEPPER DE ESTADIOS */
+  .stepper-container { margin-bottom: 16px; }
+  .stepper{ display:flex; gap:10px; }
+  .step-btn{
+    flex:1;
+    background:var(--white); 
+    border: 1px solid var(--line); 
+    border-radius:10px;
+    padding:12px 16px; 
+    cursor:pointer; 
+    text-align:left; 
+    transition:all .15s ease;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+  }
+  .step-btn:hover{ border-color: var(--primary); }
+  .step-btn.active{ 
+    background: var(--white); 
+    border: 2px solid var(--primary); 
+    box-shadow: var(--shadow-md);
+  }
+  .step-btn .left-info{ display: flex; align-items: center; gap: 10px; }
+  .step-btn .num{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:24px; height:24px; border-radius:50%; background:#E2E8F0;
+    color:var(--muted); font-weight:700; font-size:12px;
+  }
+  .step-btn.active .num{ background:var(--primary); color:var(--white); }
+  .step-btn .name{ font-weight:600; font-size:13px; color:var(--muted); transition:all .15s ease; }
+  .step-btn.active .name{ font-weight:800; font-size:16px; color:var(--primary); }
+  .step-btn .badge-count{ 
+    font-size:11.5px; font-weight: 600; padding: 3px 8px; border-radius: 12px;
+    background: #F1F5F9; color: var(--muted);
+  }
+  .step-btn.active .badge-count{ background: var(--primary-tint); color: var(--primary); font-weight:700; }
+
+  /* DETALLE DE ESTADIO */
+  .stage-detail{
+    background:var(--white); border:1px solid var(--line); border-radius:8px;
+    padding:14px 18px; margin-bottom:16px; border-left:4px solid var(--primary);
+    font-size: 13px; display: flex; gap: 20px; flex-wrap: wrap;
+  }
+  .stage-detail .col{ flex:1; min-width:220px; }
+  .stage-detail .label{ font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700;}
+  .stage-detail .val{ color:var(--ink); margin-top:3px; line-height: 1.45; }
+
+  /* GRILLAS Y TARJETAS DETALLADAS */
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(330px,1fr)); gap:16px; }
+  
+  .card{
+    background:white; border:1px solid var(--line); border-radius:10px; padding:18px;
+    display:flex; flex-direction:column; justify-content:flex-start;
+    box-shadow: var(--shadow-sm); transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .card.cat-institucional{ border-top: 4px solid var(--primary); }
+  .card.cat-metodologica{ border-top: 4px solid var(--accent); }
+  .card.cat-actor{ border-top: 4px solid #10B981; }
+
+  .card .inst-tag{ font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); font-weight:700; margin-bottom: 2px; }
+  .card h3{ margin:2px 0 8px; font-size:16px; color:var(--ink); font-weight:700; line-height: 1.3; }
+  
+  .card .sec-block{ margin-bottom: 10px; font-size: 12.5px; color: var(--ink); line-height: 1.45; }
+  .card .sec-block strong{ color: var(--primary); font-weight: 600; }
+  .card .obj{ font-size:13px; color:#334155; line-height:1.45; margin-bottom: 10px; }
+  .rol-detalle{ list-style:none; margin:0 0 10px; padding:0; border-top:1px solid #F1F5F9; padding-top:8px; }
+  .rol-detalle li{ font-size:12px; color:#64748B; line-height:1.4; margin-bottom:5px; padding-left:12px; position:relative; }
+  .rol-detalle li::before{ content:"–"; position:absolute; left:0; color:#CBD5E1; }
+  .rol-subdetalle{ list-style:none; margin:4px 0 0; padding:0; }
+  .rol-subdetalle li{ font-size:11.5px; color:#94A3B8; line-height:1.4; margin-bottom:3px; padding-left:14px; position:relative; }
+  .rol-subdetalle li::before{ content:"·"; position:absolute; left:2px; color:#CBD5E1; }
+  .rol-contacto{ font-size:11px; color:#94A3B8; margin-top:8px; line-height:1.5; }
+  .rol-contacto a{ color:#94A3B8; }
+
+  .aspectos-label{ font-weight:700; font-size:11.5px; color:var(--ink); margin-top:2px; text-transform:uppercase; letter-spacing:.03em; }
+  .aspectos{ margin:4px 0 10px; padding-left:16px; font-size:12px; color:var(--ink); line-height: 1.35; }
+  .aspectos li{ margin-bottom:3px; }
+  .chip-tipo{ background:#E2E8F0; color:#1E293B; font-weight:700; }
+  .chip-meta{ background:#F1F5F9; color:#475569; font-weight:600; }
+
+  .chips{ display:flex; gap:6px; flex-wrap:wrap; margin-top:auto; padding-top:10px;}
+  .chip{ font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:4px; background:var(--primary-tint); color:var(--primary); }
+
+  .foot{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; padding-top:12px; border-top:1px solid #F1F5F9; }
+  a.linkbtn{ font-size:12px; font-weight:600; color:var(--primary); background:var(--primary-tint); border:1px solid var(--primary-border); padding:6px 12px; border-radius:6px; text-decoration:none; transition: all 0.15s ease; }
+  a.linkbtn:hover{ background: var(--primary); color: white; }
+
+  .empty-banner{
+    text-align:center; padding:36px 20px; color:var(--muted); font-size:13.5px; 
+    background:var(--white); border-radius:10px; border:1px dashed var(--line);
+    margin-top: 10px; line-height: 1.5;
+  }
+  .empty-banner button{
+    margin-top: 14px; padding: 8px 18px; background: var(--primary); color: white;
+    border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  /* LANES / CAPAS DEL MAPA DE ACTORES */
+  .cat-dot{ display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:6px; vertical-align:-1px; }
+  .ecosystem-lane { 
+    margin-bottom: 24px; 
+    background: var(--white); 
+    border: 1px solid var(--line); 
+    border-radius: 12px; 
+    padding: 20px; 
+    box-shadow: var(--shadow-sm); 
+  }
+  .lane-header { margin-bottom: 16px; border-bottom: 1px solid #F1F5F9; padding-bottom: 12px; }
+  .lane-header h2 { margin: 0 0 4px; font-size: 17px; font-weight: 700; color: var(--ink); }
+  .lane-header p { margin: 0; font-size: 13px; color: var(--muted); }
+
+  footer{ text-align:center; padding:24px; font-size:12px; color:var(--muted); border-top:1px solid var(--line); margin-top:30px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div>
+      <h1>Navegador del Ecosistema de Innovación de Uruguay</h1>
+      <p class="header-subtitle">Instrumentos de apoyo, herramientas y actores claves</p>
+    </div>
+    
+    <div class="modo-switch" id="modoSwitch">
+      <button class="modo-btn active" data-modo="estadio">Navegador por estadio</button>
+      <button class="modo-btn" data-modo="actores">Mapa de Actores</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- VISTA 1: NAVEGADOR POR ESTADIO -->
+  <div id="modoEstadio">
+
+    <div class="control-toolbar">
+      <div class="cat-tabs" id="catTabs">
+        <button class="cat-tab active" data-cat="institucional">Instrumentos de apoyo</button>
+        <button class="cat-tab" data-cat="metodologica" style="display:none;">Herramientas metodológicas</button>
+      </div>
+
+      <div class="filters" id="filtersInst">
+        <input type="text" id="searchBox" placeholder="Buscar instrumento o palabra clave..." style="width: 220px;">
+        <select id="filterUso"><option value="">Uso: todos</option></select>
+        <select id="filterTipo"><option value="">Tipo: todos</option></select>
+        
+      </div>
+
+      <div class="filters" id="filtersMeto" style="display: none;">
+        <input type="text" id="searchBoxM" placeholder="Buscar herramienta o enfoque..." style="width: 250px;">
+        <span class="count-pill" id="countPillM"></span>
+      </div>
+    </div>
+
+    <!-- STEPPER LÍNEA DE ESTADIOS -->
+    <div class="stepper-container">
+      <div class="stepper" id="stepper"></div>
+    </div>
+
+    <!-- RESUMEN DEL ESTADIO SELECCIONADO -->
+    <div class="stage-detail" id="stageDetail"></div>
+
+    <div class="grid" id="grid"></div>
+    <div class="empty-banner" id="emptyMsg" style="display:none;"></div>
+
+  </div>
+
+  <!-- VISTA 2: MAPA DE ACTORES POR CAPAS (LANES) -->
+  <div id="modoActores" style="display:none;">
+    <div class="control-toolbar">
+      <div style="font-size: 13.5px; font-weight: 700; color: var(--ink);">Ecosistema Nacional de Innovación y Fomento Productivo</div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="text" id="searchBoxA" placeholder="Buscar por actor, rol o alcance..." style="width: 260px;">
+        <span class="count-pill" id="countPillA"></span>
+      </div>
+    </div>
+
+    <div id="ecosystemLanes">
+      <div class="ecosystem-lane" id="lane-politica">
+        <div class="lane-header">
+          <h2><span class="cat-dot" style="background:#1F4E5F"></span>1. Política pública y agencias</h2>
+          <p>Ministerios, agencias públicas y programas de gobiernos locales que financian, regulan o coordinan el ecosistema.</p>
+        </div>
+        <div class="grid" id="grid-politica"></div>
+      </div>
+
+      <div class="ecosystem-lane" id="lane-conocimiento">
+        <div class="lane-header">
+          <h2><span class="cat-dot" style="background:#2382AD"></span>2. Generación de conocimiento</h2>
+          <p>Universidades, centros tecnológicos e institutos de investigación que producen conocimiento aplicado.</p>
+        </div>
+        <div class="grid" id="grid-conocimiento"></div>
+      </div>
+
+      <div class="ecosystem-lane" id="lane-incubacion">
+        <div class="lane-header">
+          <h2><span class="cat-dot" style="background:#EB901F"></span>3. Incubación y aceleración</h2>
+          <p>Incubadoras, aceleradoras y centros de emprendimiento que acompañan directamente a empresas y equipos.</p>
+        </div>
+        <div class="grid" id="grid-incubacion"></div>
+      </div>
+
+      <div class="ecosystem-lane" id="lane-parques">
+        <div class="lane-header">
+          <h2><span class="cat-dot" style="background:#359D85"></span>4. Parques y polos territoriales</h2>
+          <p>Parques científico-tecnológicos y ecosistemas binacionales o regionales con infraestructura física compartida.</p>
+        </div>
+        <div class="grid" id="grid-parques"></div>
+      </div>
+
+      <div class="ecosystem-lane" id="lane-camaras">
+        <div class="lane-header">
+          <h2><span class="cat-dot" style="background:#8A3E52"></span>5. Cámaras, redes e innovación abierta</h2>
+          <p>Cámaras empresariales, redes y programas de innovación abierta de grandes empresas.</p>
+        </div>
+        <div class="grid" id="grid-camaras"></div>
+      </div>
+
+    </div>
+    
+    <div class="empty-banner" id="emptyMsgA" style="display:none;">Ningún actor coincide con la búsqueda introducida.</div>
+  </div>
+
+</div>
+
+<footer>
+  Este navegador reúne información pública sobre los instrumentos de apoyo y los actores clave del ecosistema de innovación en Uruguay. No es un relevamiento exhaustivo — es una selección curada según el propósito con el que fue diseñado. Última actualización: 1 de octubre de 2026 — la información no se actualiza de forma automática; para confirmar vigencia, plazos o montos, consultar siempre la fuente oficial de cada instrumento. Elaborado por Amalia Quirici y Magdalena Rosado.
+</footer>
+
+<script id="data-json" type="application/json">
+{"instrumentos": [{"nombre": "Programa de Adecuación Tecnológica", "inst": "ANDE", "obj": "Asistencia técnica y apoyo económico no reembolsable para identificar y ejecutar mejoras tecnológicas concretas. Reemplaza y consolida a los antiguos Kits digitales, Pro Digital y Voucher Modo Digital. Estructurado en dos componentes secuenciales.", "acciones": ["Componente 1 (Asistencia técnica): diseñar un plan de adecuación tecnológica junto a un equipo técnico — cerrado en esta edición", "Componente 2 (Implementación): financiar la ejecución de las medidas ya proyectadas en el plan — abierto hasta 13/08/2027"], "tipo": "Fondo no reembolsable", "acceso": "Componente 1 (Asistencia técnica): postulación cerrada 28/08/2026. Componente 2 (Implementación): postulación abierta hasta 13/08/2027.", "link": "https://www.ande.org.uy/convocatorias/item/programa-de-adecuacion-tecnologica-2026.html", "estadios": ["I", "D", "C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Camino Circular (Oportunidades Circulares)", "inst": "ANDE", "obj": "Acompañamiento especializado para que una mipyme o equipo emprendedor valide una idea o incorpore prácticas de economía circular en el negocio — es la puerta de entrada, previa a prototipar o implementar un proyecto concreto.", "acciones": ["Validar una idea de economía circular antes de invertir en desarrollarla", "Incorporar prácticas de economía circular al negocio actual, con acompañamiento especializado", "Dirigido a mipymes y equipos emprendedores (no solo empresas ya formalizadas)"], "tipo": "Asistencia técnica", "acceso": "Convocatoria 2026 — abierta según ANDE (verificado 22/09/2026)", "link": "https://ande.org.uy/convocatorias/advanced-search/7.html", "estadios": ["I", "D"], "usos": ["Transición sostenible"]}, {"nombre": "Semilla ANDE", "inst": "ANDE", "obj": "Acompañar a emprendimientos basados en productos, servicios, procesos y/o formas de comercialización que tengan valor diferencial, es decir que presenten características y funcionalidades novedosas respecto a lo que existe en el mercado/región que pretenden atender.", "acciones": ["Acompañar a un emprendimiento con valor diferencial (producto, servicio, proceso o forma de comercialización novedosa) en su etapa inicial", "Financiar hasta 80% del proyecto, tope $1.000.000"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria 2026 — ver bases en el sitio", "link": "https://ande.org.uy/convocatorias/item/semilla-ande-2026.html?category_id=10", "estadios": ["I", "D"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Redes Empresariales", "inst": "ANDE", "obj": "Financia la conformación de una red nueva de empresas o el fortalecimiento de una ya existente, entre 5 y 20 empresas trabajando en un objetivo común de asociatividad (mismo sector, cadena de valor o territorio). El proyecto debe estar patrocinado por una institución de referencia (cámara, asociación, gremial). Edición 2026 en conjunto con Inacoop, orientada a cooperativismo — Inacoop aporta asistencia técnica y acompañamiento además del dinero de ANDE.", "acciones": ["Armar una red de empresas del mismo sector o territorio para compra conjunta, comercialización conjunta o intercambio de conocimiento", "Fortalecer una red ya existente que busca dar un salto de escala", "Edición 2026: constituir o fortalecer una cooperativa, con acompañamiento técnico de Inacoop", "Requiere: un mínimo de 5 y máximo de 20 empresas, y el patrocinio de una institución de referencia"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria", "link": "https://www.gub.uy/presidencia/comunicacion/noticias/programa-redes-empresariales-ande-mipymes-convocatoria-2026", "estadios": ["D", "C"], "usos": ["Asociarse / integrarse a una cadena de valor"]}, {"nombre": "Prototipo e Implementación de Bioeconomía y Economía Circular (Oportunidades Circulares)", "inst": "ANDE", "obj": "Financia desarrollar un producto, servicio o proceso nuevo o significativamente mejorado, o escalar/adoptar soluciones de bioeconomía y economía circular — el paso siguiente a Camino Circular, una vez identificada la oportunidad. Tiene 2 fases con objetivos y montos distintos.", "acciones": ["Fase Prototipo: financiar hasta 80% del costo, tope $1.000.000, para desarrollar y probar la solución", "Fase Implementación: financiar hasta 70%, tope $1.600.000, para escalar o adoptar la solución ya probada", "Dirigido a mipymes y equipos emprendedores"], "tipo": "Fondo no reembolsable", "acceso": "Fase 1: 3/8–1/9/2026 (ya cerrada). Fase 2: 15/10–9/12/2026 (próxima a abrir, al 22/09/2026).", "link": "https://ande.org.uy/noticias/item/oportunidades-para-empresas-convocatorias-abiertas.html", "estadios": ["D", "C"], "usos": ["Transición sostenible"]}, {"nombre": "Vouchers de Transformación Digital", "inst": "ANDE", "obj": "El objetivo de este instrumento es financiar proyectos de transformación digital que permitan a las pymes incorporar tecnología, mejorar la gestión de sus negocios, aumentar su productividad y hacer más eficientes sus procesos.", "acciones": ["Las empresas deberán presentar un Plan de Transformación Digital centrado en la adopción y uso de", "tecnologías digitales que impacten en las siguientes áreas: comercial, recursos humanos, stock y", "distribución, producción y operaciones, modelo de negocio, organización de la producción y relación con", "los clientes."], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria — ver fecha de cierre exacta en el sitio", "link": "https://ande.org.uy/convocatorias/item/vouchers-de-transformacion-digital.html?category_id=10", "estadios": ["D", "C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Programa de Desarrollo de Proveedores", "inst": "ANDE / MIEM", "obj": "Articula a grandes empresas (empresas tractoras) con mipymes proveedoras locales, para fortalecer cadenas de valor. Financiado por el Fondo de Innovación Sectorial (FIS), creado en el acuerdo de inversión Uruguay-UPM 2017: UPM aporta USD 1.500.000 anuales durante 20 años para financiar iniciativas de innovación, competitividad y fortalecimiento de talento en la cadena forestal-maderera. La edición 2026 (fase 2) es específica para potenciales proveedores de UPM en la etapa de operativa y mantenimiento de sus plantas.", "acciones": ["Modalidad 1 (Validación Técnica): financiar hasta USD 30.000 por empresa, para incorporar tecnologías o validar soluciones ambientales (eficiencia energética, reducción de emisiones, manejo de residuos, economía circular) con potencial de uso en el sector forestal-celulosa", "Otra modalidad: apoyo de hasta USD 130.000 por empresa", "Integrar a una mipyme como proveedora calificada de UPM, con diagnóstico y acompañamiento previo", "Está impulsado en conjunto por MIEM, OPP, ANDE y UPM"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria (relanzada 31/07/2026)", "link": "https://ande.org.uy/images/Bases_PDP_UPM_Convocatoria_2026__Modalidad_1_1.pdf", "estadios": ["C"], "usos": ["Asociarse / integrarse a una cadena de valor"]}, {"nombre": "Validación de Ideas de Negocios", "inst": "ANDE/ANII", "obj": "brindar herramientas y acompañar a las personas emprendedoras en el proceso de validación comercial de una idea de negocio. \n\nSe busca financiar proyectos con potencial de incorporar elementos diferenciales o innovadores a nivel de producto, servicio, proceso o forma de comercialización, respecto al mercado al que se pretende ingresar.", "acciones": ["Financiar un plan para validar comercialmente una idea de negocio antes de invertir en desarrollarla a fondo", "Hasta $U 200.000 no reembolsables para ejecutar el plan de validación"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria 2026 (VIN2026) — ver bases en el sitio", "link": "https://ande.org.uy/convocatorias/item/validacion-de-ideas-de-negocios-vin2026.html?category_id=10", "estadios": ["I", "D"], "usos": ["Probar una idea"]}, {"nombre": "Activa Turismo", "inst": "ANDE/MINTUR", "obj": "Busca fortalecer la competitividad de las micro, pequeñas y medianas empresas del sector turístico mediante el desarrollo e implementación de propuestas de valor innovadoras y diferenciadas.\n", "acciones": ["Impulsar proyectos que promuevan la creación, mejora o rediseño de productos, servicios o propuestas turísticas, incorporando elementos de innovación y valor agregado que permitan a las empresas diferenciarse en el mercado y mejorar su posicionamiento."], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria: 31/8/2026 al 13/11/2026", "link": "https://ande.org.uy/convocatorias/item/activa-turismo.html?category_id=10", "estadios": ["D", "C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Apoyo a Emprendimientos Innovadores", "inst": "ANII", "obj": "Apoya la puesta en marcha y despegue de emprendimientos innovadores o nuevas empresas innovadoras de alto impacto.La convocatoria está dirigida a empresas jóvenes nacionales y emprendedores innovadores Los proyectos deberán estar liderados por al menos un emprendedor de dedicación exclusiva, y que habiendo validado su solución con su mercado objetivo, tengan potencial de escalar globalmente y busquen generar un impacto económico, social o ambiental para su entorno.\nEl equipo emprendedor podrá postular junto a una institución patrocinadora que acompañe en el proceso de formulación, ejecución y cierre del proyecto. ", "acciones": ["Financiar la puesta en marcha de una empresa nueva o joven (hasta 36 meses) basada en un producto, servicio o proceso innovador", "Cubrir un % del proyecto como fondo no reembolsable para el equipo emprendedor", "Requiere: al menos 51% del paquete accionario en manos del equipo emprendedor, y al menos un fundador radicado en Uruguay", "No puede usarse en simultáneo con Semilla ANDE en el mismo período", "Puede postularse junto a una Institución Patrocinadora de Emprendimientos (IPE), de forma opcional"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria (bases actualizadas junio 2026)", "link": "https://anii.org.uy/apoyos/emprendimientos/49/apoyo-a-emprendimientos-innovadores/", "estadios": ["I", "D"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Herramientas para la innovación", "inst": "ANII", "obj": "Fortalecer las capacidades internas de la empresa ANTES de tener un proyecto de innovación definido, para que llegue mejor preparada a diseñarlo e implementarlo. También pueden postular cámaras empresariales, no solo empresas individuales. Apoyo no reembolsable sobre un porcentaje del presupuesto elegible.", "acciones": ["Traer un experto internacional para resolver un problema específico que no tiene solución en el país (hasta 70%, tope $640.000)", "Contratar un profesional altamente calificado para reforzar capacidades de I+D+i", "Hacer una prueba de concepto: validar la viabilidad técnica de una idea antes de invertir en desarrollarla", "Financiar un posgrado (maestría o doctorado) de alguien que ya trabaja en la empresa", "Contratar consultoría en metodologías de gestión de la innovación"], "tipo": "Fondo no reembolsable", "acceso": "Ventanilla abierta", "link": "https://anii.org.uy/apoyos/innovacion/75/herramientas-para-la-innovacion", "estadios": ["D", "C"], "usos": ["Probar una idea", "Investigación y desarrollo"]}, {"nombre": "Articulación Academia + Sector Productivo", "inst": "ANII", "obj": "Financiar alianzas formales entre al menos una empresa y al menos una institución académica o de investigación, para que la academia resuelva un problema técnico concreto de la empresa o se fortalezcan capacidades nacionales de I+D. Requiere transferencia de conocimiento asegurada hacia la empresa.", "acciones": ["Encargar a una universidad o instituto que investigue una solución a un problema técnico puntual", "Detectar y resolver un cuello de botella tecnológico con apoyo académico", "Poner en marcha un proyecto de I+D conjunto con una universidad", "Facilitar la transferencia y absorción de tecnología desde la academia hacia la empresa", "NO cubre: compra de tecnología llave en mano, ni escalamiento industrial"], "tipo": "Fondo no reembolsable", "acceso": "Ventanilla abierta", "link": "https://anii.org.uy/apoyos/innovacion/272/articulacion-academia--sector-productivo", "estadios": ["D", "C"], "usos": ["Investigación y desarrollo"]}, {"nombre": "Entornos controlados de prueba (sandboxes regulatorios)", "inst": "ANII", "obj": " Busca generar condiciones para que nuevas tecnologías puedan desarrollarse, probarse y escalar, articulando capacidades públicas, privadas y académicas. Pueden ser beneficiarias: Entidades públicas o privadas, personas físicas, representantes de la academia y sociedad civil pueden presentar ante el Comité Técnico de Evaluación de Entornos Controlados proyectos para la creación de entornos controlados de prueba y espacios de datos. ", "acciones": ["Crear un espacio temporal y supervisado para probar un producto, servicio o modelo de negocio innovador (frecuente pero no exclusivo en IA y datos)", "Obtener una excepción regulatoria temporal para testear sin cumplir toda la normativa vigente, bajo supervisión", "Acceder a apoyo en el desarrollo, implementación y monitoreo del proyecto durante la prueba", "Acceder a financiación, sujeta a condiciones, una vez finalizada la etapa de pruebas"], "tipo": "Asistencia técnica", "acceso": "Postulación permanente ante el Comité Técnico de Evaluación de Entornos Controlados (CTEEC): Agesic, URCDP, MIEM, ANII y Uruguay Innova. Creado por Decreto 276/025 (dic. 2025).", "link": "https://anii.org.uy/apoyos/innovacion/675/entornos-controlados-de-prueba-sandboxes-regulatorios/", "estadios": ["C"], "usos": ["Probar una idea"]}, {"nombre": "Implementación de la innovación", "inst": "ANII", "obj": "Financiar la ejecución de un proyecto de innovación YA DEFINIDO, con mérito innovador claro, en producto (bien o servicio), proceso, organización o comercialización. No es para explorar ideas todavía sin forma — la empresa ya sabe qué quiere hacer. Aporte no reembolsable sobre parte del presupuesto del proyecto.", "acciones": ["Financiar el desarrollo y lanzamiento de un producto o servicio nuevo ya definido", "Financiar un cambio de proceso productivo ya diseñado", "Cubrir actividades de prototipado dentro de un proyecto de innovación en marcha", "Apoyar un cambio organizacional o de comercialización ligado a una innovación concreta", "NO cubre: ideas sin desarrollar todavía, ni compra de equipamiento sin proyecto de innovación asociado"], "tipo": "Fondo no reembolsable", "acceso": "Ventanilla abierta", "link": "https://anii.org.uy/apoyos/innovacion/76/implementacion-de-la-innovacion", "estadios": ["C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Apoyo para el patentamiento", "inst": "ANII", "obj": "Cubrir el costo de patentar un desarrollo propio, en Uruguay o vía tratados internacionales (PCT). Requiere tener un desarrollo patentable, no una idea sin materializar.", "acciones": ["Financiar hasta 50% del presupuesto de patentamiento, tope $1.000.000", "Financiar hasta 70% (tope $1.200.000) si la presentación PCT se hace vía la oficina uruguaya (DNPI)", "Cubrir gastos de gestoría o estudio de patentes"], "tipo": "Fondo no reembolsable", "acceso": "Ventanilla abierta", "link": "https://siteanii.anii.org.uy/upcms/files/llamados/documentos/bases-anii-apoyo-patentamiento-2026-.docx.pdf", "estadios": ["C"], "usos": ["Proteger propiedad intelectual"]}, {"nombre": "Desafíos empresariales", "inst": "ANII", "obj": "Convocatorias donde una institución o sector plantea un desafío concreto y las empresas postulan soluciones.", "acciones": ["Postular una solución a un desafío específico planteado por una institución o sector", "Aplicar una tecnología o proceso propio a un problema ajeno concreto"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria por desafío", "link": "https://anii.org.uy/apoyos/innovacion/557/desafios-empresariales", "estadios": ["C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Fondo Orestes Fiandra", "inst": "ANII", "obj": "Crédito contingente (se devuelve solo si el proyecto tiene éxito) para la expansión de empresas intensivas en conocimiento, con foco en escalar internacionalmente. Para medianas y grandes empresas.", "acciones": ["Financiar la expansión de una empresa de base tecnológica o de conocimiento ya consolidada", "Acceder a condiciones de devolución solo si el proyecto resulta exitoso (riesgo compartido con ANII)", "Desde 2026, el foco se está ampliando para permitir el acceso a empresas de menor porte"], "tipo": "Crédito o garantía", "acceso": "Ventanilla abierta", "link": "https://www.anii.org.uy/apoyos/innovacion/37/expansion-de-la-innovacion-fondo-orestes-fiandra/", "estadios": ["C"], "usos": ["Internacionalización"]}, {"nombre": "Coinversión: en startups con organizaciones de capital emprendedor e inversores ángeles", "inst": "ANII", "obj": "ANII cuenta con un registro de fondos de inversión acreditados, y mediante el instrumento las startups podrán solicitar la coinversión con fondos públicos. Las startups deberán contar con un producto o servicio innovador, un modelo de negocios escalable, demostrar potencial de alto crecimiento y tener un equipo altamente calificado. Para solicitar la coinversión la startup deberá completar un formulario de postulación, donde se solicitará acreditar la existencia de un compromiso de inversión por parte de un inversor privado que sea parte del registro de inversores elegibles, haber atravesado previamente un proceso de due diligence, entre otra información relevante.", "acciones": ["Multiplicar la inversión privada que logra la startup con fondos públicos para su desarrollo y expansión"], "tipo": "Inversión", "acceso": "Ventanilla abierta", "link": "https://anii.org.uy/apoyos/emprendimientos/374/coinversion-en-startups-con-organizaciones-de-capital-emprendedor-e-inversores-angeles/", "estadios": ["C"], "usos": ["Internacionalización"]}, {"nombre": "Crédito fiscal para empresas que hagan I+D", "inst": "ANII / DGI", "obj": "Descuento en el IRAE por gastos YA realizados en investigación y desarrollo, certificados por ANII — es una devolución fiscal posterior, no un subsidio adelantado. Requiere poder certificar el gasto ante ANII.", "acciones": ["Recuperar hasta 35% de lo gastado en I+D hecho puertas adentro de la empresa", "Recuperar hasta 45% si el I+D se hizo junto a una universidad o centro tecnológico certificado", "Recuperar hasta 100% de lo gastado en contratar egresados o estudiantes de maestría/doctorado para I+D", "Requiere: haber incurrido ya en el gasto, no sirve para financiar por adelantado"], "tipo": "Beneficio impositivo", "acceso": "Ventanilla abierta", "link": "https://anii.org.uy/apoyos/innovacion/253/credito-fiscal-a-empresas-para-actividades-de-id", "estadios": ["C"], "usos": ["Investigación y desarrollo"]}, {"nombre": "Fondo ReValora", "inst": "ANII / MIEM (línea alimentos: con ANDE)", "obj": "Promueve la transición hacia una economía circular mediante tecnologías limpias y sostenibles. Tiene más de una línea temática, cada una con su propio calendario.", "acciones": ["Línea energía: financiar electrificación o descarbonización de procesos (Power to heat) — cerró 09/06/2026", "Línea alimentos (con ANDE): financiar un proyecto demostrativo de economía circular en la cadena alimentaria, hasta USD 100.000 — vigente desde 21/08/2026", "Verificar cuál línea está activa antes de ofrecerlo, dado que no son una única convocatoria permanente"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria por línea temática", "link": "https://www.gub.uy/ministerio-industria-energia-mineria", "estadios": ["C"], "usos": ["Transición sostenible"]}, {"nombre": "Fondo Sectorial de Energía", "inst": "ANII / MIEM / UTE / ANCAP", "obj": "Financia investigación, desarrollo e innovación que potencien o fortalezcan las capacidades del sector energético nacional. Tres modalidades: I (investigación, instituciones sin fines de lucro), II (innovación, empresas privadas), III (desafíos, empresas y centros tecnológicos).", "acciones": ["Financiar un proyecto de I+D en energía (renovables, movilidad sostenible, baterías, eficiencia energética, descarbonización)", "Empresa privada: implementar un proyecto de innovación energética (Modalidad II)", "Resolver un desafío concreto planteado por el sector energético (Modalidad III)"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria anual", "link": "https://www.gub.uy/ministerio-industria-energia-mineria/comunicacion/convocatorias/fondo-sectorial-energia-2026", "estadios": ["C"], "usos": ["Investigación y desarrollo", "Transición sostenible"]}, {"nombre": "Impulsa Industrias", "inst": "CIU", "obj": "Proyecto de fortalecimiento tecnológico e industrial de la Cámara de Industrias del Uruguay (CIU), financiado por INEFOP, activo desde 2015. Tiene varios componentes: capacitación y asistencia técnica, un área específica de Emprendimientos, y subsidios directos para proyectos de sostenibilidad.", "acciones": ["Acceder a talleres con expertos y encuentros de negocios para pymes industriales", "Financiar hasta 80% de un proyecto de sostenibilidad o mejora del desempeño ambiental de la empresa", "A través de \"Alianzas Industriales\": fortalecer capacidades y generar oportunidades de desarrollo empresarial para mypes industriales", "A través de \"La Industria Investiga\" (con CSIC-UdelaR): orientación para desarrollar un proyecto de investigación en agua, energía o envases — confirmado solo para la edición 2024, sin evidencia de continuidad", "Pendiente confirmar: hay referencias a convocatorias de \"células de innovación\" que no se pudieron verificar en fuentes oficiales"], "tipo": "Fondo no reembolsable", "acceso": "Contacto directo con CIU / Impulsa Industria — ventanilla abierta para talleres y asistencias técnicas", "link": "https://impulsaindustria.com.uy/", "estadios": ["D", "C"], "usos": ["Desarrollo de capacidades", "Transición sostenible"]}, {"nombre": "CTPLAS", "inst": "CIU + socios", "obj": "Centro Tecnológico del Plástico — iniciativa conjunta de AUIP, CIU, LATU y Fundación Julio Ricaldoni (Facultad de Ingeniería, UdelaR), cofinanciada por ANII. Ofrece servicios de capacitación y tecnológicos para consolidar el desarrollo del sector plástico en Uruguay.", "acciones": ["Acceder a capacitación técnica específica para la industria del plástico", "Acceder a asistencia técnica y expertos del sector (reciclaje de materiales, incorporación de nuevos materiales a procesos productivos)"], "tipo": "Asistencia técnica", "acceso": "Contacto directo: ctplas@ciu.com.uy", "link": "https://ctplas.com.uy/servicios/#asesoramiento", "estadios": ["D", "C"], "usos": ["Desarrollo de capacidades"]}, {"nombre": "Incorporación de Nuevas Competencias", "inst": "INEFOP", "obj": "Instrumento de INEFOP (Gerencia de Empresas) que subsidia parcialmente una capacitación o consultoría diseñada a medida para la empresa — a diferencia de \"Capacitación Estándar\", que cofinancia cursos ya existentes en el mercado.", "acciones": ["Subsidiar una capacitación o consultoría diseñada específicamente a medida de la empresa", "Financiar un % del costo mediante subsidio parcial (el tope varía según tipo de postulante)", "Requiere estar al día con BPS y DGI"], "tipo": "Asistencia técnica", "acceso": "Ventanilla abierta — formulario online, evaluado por un Técnico de INEFOP", "link": "https://www.inefop.uy/nuevas-competencias", "estadios": ["D", "C"], "usos": ["Desarrollo de capacidades"]}, {"nombre": "FPTA (Fondo de Promoción de Tecnología Agropecuaria)", "inst": "INIA", "obj": "Financia proyectos de investigación, desarrollo experimental y transferencia tecnológica de terceros —instituciones académicas, organismos públicos y también empresas privadas— en temáticas agropecuarias prioritarias.", "acciones": ["Financiar investigación aplicada al agro ejecutada por un tercero (no solo INIA)", "Acceder a transferencia tecnológica en temáticas priorizadas por el sector", "Una empresa privada puede ser la entidad ejecutora del proyecto"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria anual", "link": "https://www.inia.uy", "estadios": ["C"], "usos": ["Investigación y desarrollo"]}, {"nombre": "Transforma Territorio", "inst": "MIEM (Dinapyme)", "obj": "Programa nuevo del MIEM/Dinapyme (lanzado 24/06/2026) con foco en desarrollo productivo del interior: fondos no reembolsables concursables para mypes y unidades de producción familiar agropecuaria, para inversiones que mejoren competitividad y sostenibilidad. Se despliega por región, no como convocatoria única nacional.", "acciones": ["Financiar una inversión concreta que mejore la competitividad de una mype del interior", "Aplica también a unidades de producción familiar agropecuaria, no solo a empresas formales", "Se despliega región por región: Región Este (Treinta y Tres, Lavalleja, Rocha) ya cerró su primera edición; Región Litoral, vigente"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria concursable, por región. Región Este (Treinta y Tres, Lavalleja, Rocha): No Vigente. Región Litoral: Vigente.", "link": "https://www.gub.uy/ministerio-industria-energia-mineria/comunicacion/convocatorias/transforma-territorio-2026-region-litoral", "estadios": ["C"], "usos": ["Acceso a financiamiento"]}, {"nombre": "Zonas Francas", "inst": "Poder Ejecutivo", "obj": "Régimen legal permanente que exonera a la empresa instalada dentro del área delimitada de todos los impuestos nacionales creados o a crearse (excepto aportes a la seguridad social).", "acciones": ["Instalar la empresa (o una unidad de negocio) en una zona franca y operar exenta de IRAE, IVA y Patrimonio", "Contratar hasta 25% (o más, con autorización especial) de personal extranjero sin aportes locales", "Distribuir dividendos a accionistas del exterior libres de impuesto"], "tipo": "Beneficio impositivo", "acceso": "Instalación permanente dentro de una zona franca habilitada", "link": "https://www.uruguayxxi.gub.uy", "estadios": ["C"], "usos": ["Instalación / expansión física"]}, {"nombre": "COMAP (régimen de promoción de inversiones)", "inst": "Poder Ejecutivo / MEF", "obj": "Régimen permanente de promoción de inversiones: exonera IRAE y otros impuestos según una matriz de objetivos e indicadores, con bonificación adicional si el proyecto incluye I+D+i en áreas prioritarias.", "acciones": ["Exonerar hasta el 90% del IRAE de cada ejercicio, según el proyecto de inversión", "Cómputo especial (1,5x) de honorarios y salarios en desarrollos científico-tecnológicos de áreas prioritarias", "Exonerar tasas de importación e IVA de obra civil"], "tipo": "Beneficio impositivo", "acceso": "Ventanilla abierta (no es convocatoria con plazo)", "link": "https://www.uruguayxxi.gub.uy", "estadios": ["C"], "usos": ["Acceso a financiamiento"]}, {"nombre": "SiGa Innovación", "inst": "U+I (Uruguay Innova) / ANDE / ANII / SiGa", "obj": "Facilita el acceso a financiamiento bancario para mipymes que desarrollen proyectos de innovación, mediante una garantía SiGa bonificada. Es un mecanismo para que el crédito bancario sea más accesible y barato.", "acciones": ["Respaldar un crédito bancario para un proyecto de innovación de producto (bien o servicio nuevo o significativamente mejorado)", "Respaldar un crédito para un proyecto de innovación de proceso (producción, distribución, logística, comercialización, organización/gestión, o incorporación de I+D/diseño)", "Acceder a una bonificación del 50% en la comisión de uso de la garantía SiGa", "Cubrir hasta el 70% del crédito solicitado, tope UI 1.200.000", "NO sirve para proyectos centrados solo en comprar tecnología \"llave en mano\""], "tipo": "Crédito o garantía", "acceso": "Ventanilla abierta: 22/09/2026 al 31/12/2026, 14:00hs", "link": "https://anii.org.uy/apoyos/innovacion/692/siga-innovacion/", "estadios": ["C"], "usos": ["Acceso a financiamiento", "Innovar en productos y procesos"]}, {"nombre": "Oportunidades Circulares", "inst": "ANDE", "obj": "Financia proyectos de economía circular, con componentes que varían por edición (2026 incluyó 'Proyectos demostrativos', antes existieron 'Puesta en marcha' y 'Fomento de iniciativas circulares'). Programa consolidado desde 2018, con más de 900 postulaciones históricas y 185 proyectos financiados.", "acciones": ["Financiar un piloto o demostración de economía circular", "Implementar un proyecto circular ya diseñado", "Edición 2026: USD 1.300.000 en total, con aporte adicional de MIEM (línea ReValora)"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria", "link": "https://www.gub.uy/presidencia/comunicacion/noticias/ande-inscripciones-oportunidades-circulares-2026", "estadios": ["D", "C"], "usos": ["Transición sostenible"]}, {"nombre": "Uruguay al Mundo", "inst": "ANDE (con Uruguay XXI, ANII, LATU, MIEM)", "obj": "Apoyo no reembolsable para impulsar la internacionalización de mipymes y startups, con dos rutas según la etapa de la empresa.", "acciones": ["Modalidad exportación: preparar y escalar la producción para exportar (hasta 80% del proyecto, tope USD 10.000)", "Modalidad internacionalización: consolidar y escalar en mercados donde la empresa ya tiene experiencia (hasta 80%, tope USD 20.000)", "Ambas modalidades pueden incluir una etapa de diseño del plan de actividades"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria (cerró 26/03/2026)", "link": "https://uruguayalmundo.uy", "estadios": ["C"], "usos": ["Internacionalización"]}, {"nombre": "Cashback para Inversiones en Adecuación Tecnológica", "inst": "ANDE / BROU", "obj": "Reintegro parcial sobre un crédito BROU tomado para invertir en tecnología, dirigido a pequeñas empresas de sectores priorizados por ANDE (agroindustria inteligente, ciencia de la vida, logística, industria).", "acciones": ["Financiar la inversión tecnológica con un crédito BROU y recuperar entre 10% y 15% de ese monto", "Tope de reintegro: $500.000 por empresa", "Pensado como complemento del Programa de Adecuación Tecnológica, no como sustituto"], "tipo": "Crédito o garantía", "acceso": "Convocatoria (cerró 10/07/2026)", "link": "https://www.gub.uy/presidencia/comunicacion/noticias/ande-cashback-mipymes-inversion-tecnologia", "estadios": ["D"], "usos": ["Acceso a financiamiento"]}, {"nombre": "Despega Pyme", "inst": "ANDE-ANII", "obj": "Financia el 100% de servicios de asistencia técnica para incorporar valor diferencial a la empresa mediante metodologías de detección de oportunidades, como paso previo dentro de una ruta hacia la innovación. Instrumento combinado ANDE-ANII. Actualmente no activo.", "acciones": ["Financiar el 100% de una asistencia técnica para detectar oportunidades de innovación", "Salir con un plan de acción concreto de valor diferencial", "Requisitos: al menos 12 meses de actividad formal ininterrumpida, estar al día con DGI/BPS"], "tipo": "Asistencia técnica", "acceso": "Convocatoria", "link": "https://www.ande.org.uy/convocatorias/item/programa-despegapyme-2024.html", "estadios": ["I", "D"], "usos": ["Probar una idea"]}, {"nombre": "Fondos sectoriales", "inst": "ANII", "obj": "Fondos para investigación o implementación de proyectos innovadores según la agenda de un sector específico (ej. agro, energía). Se abren y cierran por sector y ciclo, no hay una convocatoria permanente.", "acciones": ["Postular un proyecto de innovación alineado a la agenda de un sector específico", "Los fondos sectoriales conocidos (Innovagro, Energía, ReValora) se abren y cierran por sector y ciclo — revisar en anii.org.uy/apoyos/innovacion cuál está abierto"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria", "link": "https://anii.org.uy/apoyos/innovacion/", "estadios": ["C"], "usos": ["Investigación y desarrollo"]}, {"nombre": "Fondo Sectorial Innovagro", "inst": "ANII / INIA", "obj": "Financia investigación, desarrollo tecnológico e innovación en el área agropecuaria y agroindustrial, priorizando cadenas exportadoras.", "acciones": ["Financiar un proyecto de I+D+i agropecuario o agroindustrial", "Resolver un problema de una cadena de valor agroexportadora", "Aplica también a proyectos de innovación demandados directamente por el sector productivo"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria anual", "link": "https://anii.org.uy/upcms/files/llamados/documentos/bases-innovagro-2026-mod-i-y-ii-20260218-vf-1-.pdf", "estadios": ["C"], "usos": ["Investigación y desarrollo"]}, {"nombre": "Prodiseño", "inst": "MIEM", "obj": "Subsidio para incorporar diseño profesional en distintas áreas de la empresa (producto, textil, comunicación visual, packaging, web, interiorismo comercial), mediante la contratación de un diseñador profesional habilitado (Licenciado en Diseño, técnico CETP-UTU, o socio de la Cámara de Diseño). Financia un % de las horas de consultoría según tamaño de empresa: 80% micro, 70% pequeña, 60% mediana.", "acciones": ["Contratar un diseñador para rediseñar un producto físico, incluyendo el prototipado (tope $200.000)", "Mejorar la identidad visual, packaging o el sitio web de la empresa (tope $70.000-$140.000 según rubro)", "Rediseñar el espacio de venta (interiorismo comercial: exhibidores, puntos de venta)", "Edición 2026: incentivo adicional si el proyecto incorpora diseño circular (tope $250.000)", "Edición 2026 cerró el 13/08/2026 — confirmar próxima apertura antes de ofrecerlo"], "tipo": "Asistencia técnica", "acceso": "Convocatoria", "link": "https://www.gub.uy/ministerio-industria-energia-mineria/politicas-y-gestion/prodiseno", "estadios": ["D", "C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Convocatoria Mujeres que Transforman", "inst": "MIEM", "obj": "Fondo no reembolsable para proyectos de innovación en empresas lideradas por mujeres, con mejoras sustanciales e incorporación de innovación.", "acciones": ["Financiar una mejora sustancial en una empresa liderada por una mujer", "Incorporar innovación en producto, servicio o proceso con foco de género"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria anual (2026: abrió 12/06, cerró 27/07 — ya cerrada).", "link": "https://www.gub.uy/ministerio-industria-energia-mineria/comunicacion/convocatorias/convocatoria-mujeres-transforman-2026", "estadios": ["D", "C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Fondo Industrial", "inst": "MIEM", "obj": "Apalanca inversiones para cambios tecnológicos en procesos productivos y desarrollo de nuevos productos. Exclusivo para mipymes industriales.", "acciones": ["Financiar la compra de maquinaria o tecnología nueva para producir mejor o distinto", "Financiar un cambio de proceso productivo industrial", "Solo rubro industrial; edición 2026 corrió abril-junio y ya cerró, hasta $2.000.000 por proyecto"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria anual", "link": "https://www.gub.uy/tramites/fondo-industrial-fi", "estadios": ["C"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "IncubaElectro", "inst": "MIEM - LATU - ANTEL", "obj": "Incuba proyectos de base tecnológica en electrónica, IoT y robótica durante 12 meses, con fondo no reembolsable, laboratorio de prototipado, mentores y vinculación con ANII/ANDE. Alianza MIEM + LATU + ANTEL. Excluye a empleados directos de MIEM/ANTEL como titulares de proyecto.", "acciones": ["Financiar hasta $150.000 no reembolsables para pasar de prototipo a producto, sin ceder equity", "Acceder a laboratorio de prototipado y electrónica, coworking en LATU, e infraestructura cloud de ANTEL", "Conseguir mentorías técnicas y de negocio personalizadas durante 12 meses", "Apunta a estudiantes avanzados, makers con prototipo, microempresas o equipos asociativos con proyecto innovador que busque generar ingresos", "Convocatoria cerrada actualmente — confirmar próxima apertura"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria (postulación + demo de 10 min ante comité). Cerrada actualmente — confirmar próxima apertura.", "link": "https://www.incubaelectro.uy/", "estadios": ["D"], "usos": ["Innovar en productos y procesos"]}, {"nombre": "Prácticas Asociativas", "inst": "ANDE-Centros Pymes", "obj": "Proyectos concretos para 4-5 empresas de un mismo territorio o sector que quieren emprender una actividad conjunta.", "acciones": ["Organizar una compra conjunta entre empresas vecinas", "Compartir un servicio o infraestructura entre varias empresas de la zona", "Pendiente verificar si sigue vigente en 2026 o si quedó absorbida por otro programa"], "tipo": "Fondo no reembolsable", "acceso": "Ventanilla abierta", "link": "https://www.ande.org.uy/convocatorias/item/practicas-asociativas-2024.html", "estadios": ["C"], "usos": ["Asociarse / integrarse a una cadena de valor"]}, {"nombre": "Fondo de Innovación Activa", "inst": "Gobierno de Canelones", "obj": "Financia parcialmente servicios técnicos y científicos del Parque Científico y Tecnológico de Pando (vigilancia tecnológica, transferencia de conocimiento, ciencia aplicada) para pymes de Canelones con potencial innovador. \nSe lanzó en en mayo 2026", "acciones": ["Acceder a un servicio de vigilancia tecnológica e inteligencia competitiva (VIC) hecho por el PCTP", "Financiar transferencia de conocimiento científico aplicado a la empresa, en las áreas de especialidad del PCTP (química, biotecnología, nanotecnología, farmacéutica, alimentos, medio ambiente)"], "tipo": "Fondo no reembolsable", "acceso": "Convocatoria / diagnóstico previo", "link": "https://pctp.org.uy/en/general/lanzamiento-programa-innovacion-activa/", "estadios": ["C"], "usos": ["Investigación y desarrollo", "Desarrollo de capacidades"]}], "herramientas": [{"nombre": "Los 5 Por qué (Análisis de Causa Raíz)", "obj": "Técnica conversacional y analítica simple para indagar las causas subyacentes de un problema operativo repetitivo sin quedarse en los síntomas.", "aspectos": ["Facilidad de aplicación: no requiere software ni conocimientos técnicos previos.", "Fomenta la discusión profunda entre operarios y mandos medios.", "Identifica cuellos de botella organizacionales con costo de implementación cero."], "fuente": "Metodologías Ágiles / Lean", "link": "https://pivot.lat/wp-content/uploads/2026/05/54-Los-5-Por-que.pdf", "estadios": ["I"]}, {"nombre": "Matriz de Eisenhower (Priorización)", "obj": "Herramienta de gestión de prioridades para clasificar tareas e iniciativas según dos ejes: urgencia e importancia.", "aspectos": ["Permite a la dirección salir del 'modo apagafuegos' recurrente.", "Ayuda a liberar tiempo directivo para dedicarlo a proyectos de mejora e innovación.", "Estructura 4 cuadrantes claros: Hacer, Programar, Delegar, Eliminar."], "fuente": "Gestión Organizacional", "link": "https://pivot.lat/wp-content/uploads/2026/05/24-Matriz-de-Eisenhower.pdf", "estadios": ["I"]}, {"nombre": "Preguntas Reflexivas HIP (Ecosistema Abierto)", "obj": "Guía de preguntas potentes orientadas a disparar el autodiagnóstico en empresas familiares o pymes que nunca han encarado procesos formales de cambio.", "aspectos": ["No genera resistencia ni percepción de evaluación burocrática.", "Ideal como disparador en la primera reunión o entrevista en profundidad.", "Aborda aspectos clave: propósito, colaboración interna, cliente y visión."], "fuente": "Raúl Oliván / HIP", "link": "https://www.segib.org", "estadios": ["I"]}, {"nombre": "Canvas de Experimento de Innovación", "obj": "Plantilla visual estructurada para diseñar pruebas piloto de bajo costo que validen o refuten hipótesis operativas antes de invertir capital.", "aspectos": ["Establece explícitamente la hipótesis, el método de prueba y la métrica de éxito.", "Reduce drásticamente el riesgo económico de fallar a gran escala.", "Favorece el aprendizaje acelerado y la iteración del prototipo."], "fuente": "Pívot / Lean Startup", "link": "https://pivot.lat/wp-content/uploads/2026/05/17-Canvas-de-experimento.pdf", "estadios": ["D"]}, {"nombre": "Value Proposition Canvas (Lienzo de Propuesta de Valor)", "obj": "Mapeo detallado para alinear los productos o servicios ofrecidos con los dolores, frustraciones y alegrías reales del cliente final.", "aspectos": ["Permite rediseñar la oferta actual con un enfoque centrado en el usuario.", "Evita gastar recursos en funcionalidades que el mercado no valora.", "Base indispensable antes de formular un proyecto para ANII o ANDE."], "fuente": "Strategyzer / Alex Osterwalder", "link": "https://libwww.freelibrary.org", "estadios": ["D"]}], "actores": [{"actor": "ANDE", "categoria": "politica", "rol": "Actor clave en la promoción del desarrollo económico productivo, en forma sustentable, con equidad social y equilibrio ambiental y territorial. Diseñando programas e instrumentos eficaces, eficientes, transparentes, con especial énfasis en la promoción de las micro, pequeñas y medianas empresas.", "link": "https://ande.org.uy", "tambien_en": []}, {"actor": "ANII", "categoria": "politica", "rol": "Actor clave del ecosistema nacional de Innovación.\nConocimiento y el asesoramiento experto sobre el ecosistema, los instrumentos, y las estrategias más adecuados para cada caso.\nNetworking y matchmaking: acceso a los actores, las bases de datos, el conocimiento experto del ecosistema de investigación e innovación. \nFinanciamiento. Los objetivos, responsables y  resultados de los proyectos se comparten de forma pública a través de la web de ANII y el portal Prisma", "link": "https://anii.org.uy\n\nhttps://prisma.uy/", "tambien_en": []}, {"actor": "INEFOP", "categoria": "politica", "rol": "Instituto Nacional de Empleo y Formación Profesional. A través de su Gerencia de Empresas, subsidia parcialmente capacitación y consultoría para empresas (Capacitación Estándar, Incorporación de Nuevas Competencias, entre otros instrumentos), fortaleciendo competencias vinculadas a la innovación y productividad.", "link": "https://www.inefop.uy/", "tambien_en": []}, {"actor": "LATU", "categoria": "politica", "rol": "El LATU apoya el desarrollo en gestión organizacional y contribuye al avance productivo a través de la transferencia tecnológica. Ofrece sus servicios a organizaciones públicas y privadas, para propiciar procesos de cambio que contribuyen y fortalecen su competitividad y sustentabilidad a través de la mejora de la gestión empresarial, de sus procesos, de la promoción de la innovación y de su gestión socialmente responsable. \nDepartamento de Gestión y Transferencia Tecnológica para el Desarrollo Local. \nActualmente coordinando dos programas de apoyo a mypes: Avanza Mypes y Mype Exporta (ver botones abajo). \nDepartamento de Innovación y Desarrollo en Gestión, de la Gerencia de Tecnología y gestión", "link": "Desarrollo local: https://www.latu.org.uy/servicios-latu/servicios-de-consultoria/desarrollo-local\nReferente: Daniel Pippolo, Jefe del Depto. dpippolo@latu.org.uy\nInnovación y desarrollo en gestión: https://www.latu.org.uy/servicios-latu/servicios-de-consultoria/innovacion-y-desarrollo-en-gestion\nReferentes: Stella Cristobal, Jefa del Dpto.: scristo@latu.org.uy y Andrés Olivera: aolivera@latu.org.uy\nAvanza Mypes: https://avanzamypes.org.uy/\nMype Exporta: https://www.mypeexporta.com.uy", "tambien_en": ["incubacion", "parques"]}, {"actor": "MIEM", "categoria": "politica", "rol": "Política Pública Nacional\nUnidad de Políticas de Innovación del MIEM (creada en 2025). Con tres ejes estratégicos: Descentralización de la innovación, \nPromoción de la I+D+i en organizaciones públicas, Fortalecimiento de infraestructuras tecnológicas (Parques y Centros Tecnológicos).\nEjecuta instrumentos de apoyo a la innovación, especialmente dirigidos a Mipymes industriales.  \nEl MIEM también tiene un rol clave en Marcas y patentes \n", "link": "Dirección Nacional de Industrias: https://www.gub.uy/ministerio-industria-energia-mineria/politicas-y-gestion/ponerse-contacto-direccion-nacional-industrias\nMarcas y patentes: https://www.gub.uy/ministerio-industria-energia-mineria/marcas-patentes", "tambien_en": []}, {"actor": "Uruguay Innova (U+I)", "categoria": "politica", "rol": "Política Pública - Estrategia Nacional.\nNace con el objetivo de contribuir al desarrollo económico y social del país, mejorando la productividad y la competitividad mediante el uso del conocimiento y la innovación.\nEl Plan Estratégico Nacional de CTi es el instrumento de planificación estratégica de mediano y largo plazo que orienta la política pública en ciencia, tecnología e innovación.", "link": "https://www.gub.uy/uruguay-innova", "tambien_en": []}, {"actor": "CEIBAL", "categoria": "conocimiento", "rol": "Fundación Ceibal. Junto con ANII, dirige el Fondo Sectorial de Educación: Inclusión Digital (FSED) desde 2015 — el primer fondo nacional para investigación multidisciplinaria sobre procesos de enseñanza-aprendizaje mediados por tecnología digital, abierto a grupos de investigación nacionales e internacionales (proyectos de 12-18 meses). También impulsa proyectos de inteligencia artificial aplicados a la educación (EduIA Lab).", "link": "https://ceibal.edu.uy/", "tambien_en": []}, {"actor": "CTPLAS", "categoria": "conocimiento", "rol": "Centro Tecnológico del Plástico. Iniciativa conjunta de CIU, LATU, AUIP y Facultad de Ingeniería (UdelaR), cofinanciada por ANII bajo su instrumento de Centros Tecnológicos (2014). Tiene planta piloto, capacidades tecnológicas y equipamiento para el desarrollo, ensayo y transformación de materiales plásticos. Referente del Núcleo Productivo Plástico del MIEM (espacio de diálogo público-privado creado en 2026), con foco en innovación, sostenibilidad y economía circular del sector. Coordinadora general (jun. 2026): María Dabezies.", "link": "https://ctplas.com.uy/servicios/#asesoramiento", "tambien_en": []}, {"actor": "CURE", "categoria": "conocimiento", "rol": "Centro Universitario Regional Este de UdelaR, con sede principal en Maldonado y presencia en Rocha, Treinta y Tres y Lavalleja. Carreras de grado, tecnicaturas y maestrías, con laboratorios propios (ecología, química, entre otros) que sostienen investigación aplicada en la región este del país.", "link": "https://www.cure.edu.uy/", "tambien_en": []}, {"actor": "Fundación Julio Ricaldoni", "categoria": "conocimiento", "rol": "La Fundación Julio Ricaldoni (Facultad de Ingeniería de la Udelar), trabaja en la vinculación entre universidad y sector productivo, facilitando la transferencia de conocimiento y capacidades de I+D+i. También impulsa el desarrollo científico-tecnológico.", "link": "https://www.ricaldoni.org.uy/", "tambien_en": []}, {"actor": "INIA — Instituto Nacional de Investigación Agropecuaria", "categoria": "conocimiento", "rol": "Actor clave en transferencia tecnológia en el sector Agropecuario con sedes territoriales. Tiene una Gerencia de Innovación y Valorización propia, y una Unidad de Articulación Productiva Institucional (UAPI) dedicada específicamente a conectar sus capacidades científicas con la demanda de productores y empresas del agro. En 2026 incorporó un Gerente de Innovación dedicado a la vinculación con empresas, startups y universidades. \nCuenta con 5 estaciones experimentales regionales (además de la Dirección Nacional en Montevideo): La Estanzuela (Colonia), Las Brujas (Canelones), Salto Grande (Salto), Tacuarembó y Treinta y Tres — cada una con foco en las cadenas productivas de su zona.", "link": "https://inia.uy", "tambien_en": []}, {"actor": "Latitud", "categoria": "conocimiento", "rol": "Fundación del LATU orientada a la planificación y ejecución de proyectos de Investigación, Desarrollo e Innovación (I+D+i). Brinda al sector productivo soluciones innovadoras mediante investigación aplicada, vinculación tecnológica y trabajo en redes. \nCuenta con 2 plantas piloto y laboratorios en el Parque Tecnológico del LATU. Sus líneas de acción incluyen alimentos, ambiente y agua, bioeconomía sostenible, biorrefinería y tecnología de la madera.", "link": "https://latitud.org.uy/sobre-latitud/\nContactos de referencia: Ana Curutchet acurutch@latitud.org.uy\nPatricia Arcia: parcia@latitud.org.uy", "tambien_en": []}, {"actor": "UdelaR — CENUR", "categoria": "conocimiento", "rol": "2 Centros Universitarios Regionales: CENUR Litoral Norte (sede en Salto), CENUR Noreste (Tacuarembó, Rivera y Melo/Cerro Largo). Comparten campus con INIA en Tacuarembó y Treinta y Tres. Laboratorios: energía solar, genética, inmunología, virología, microscopía electrónica, geología", "link": "https://udelar.edu.uy/carrerasinterior", "tambien_en": []}, {"actor": "UdelaR — CSIC (Vinculación Universidad-Sociedad y Producción)", "categoria": "conocimiento", "rol": "La Comisión Sectorial de Investigación Científica (CSIC) es el organismo de cogobierno de UdelaR a cargo del fomento de la investigación. \nSu Programa de Vinculación Universidad-Sociedad y Producción funciona desde 1992: financia proyectos de investigación liderados por equipos de UdelaR, de cualquier disciplina, para resolver un problema concreto planteado por una empresa u organización (la 'contraparte'), en todo el territorio nacional.", "link": "https://www.csic.edu.uy", "tambien_en": []}, {"actor": "UTEC — Universidad Tecnológica", "categoria": "conocimiento", "rol": "Actor relevante en formación, conocimiento e I+D en el interior del país. \nInvestigación, desarrollo y vinculación, con agendas territoriales. \nServicios tecnológicos en temas Agroambientales, Lacteos, Alimentos, Tecnología, etc. \nDireccion de Innovación y Emprendimientos: Programas y formación en Innovación. \nPrograma Uruguay Global II: busca promover la innovación y competitividad mediante formación en tecnologías digitales avanzadas, articulada con gestión de la innovación, emprendimientos tecnológicos y sostenibilidad, y con acciones de vinculación e internacionalización empresarial.Conformando el equipo territorial. ", "link": "I+D: https://utec.edu.uy/es/investigacion/\nServicios tecnológicos. https://utec.edu.uy/es/investigacion/unidades-tecnologicas/\nReferentes territoriales Programa de Innovación y Emprendimientos: https://utec.edu.uy/es/innovacion/programa-de-emprendimientos/ \n\n", "tambien_en": ["incubacion", "parques"]}, {"actor": "UTU", "categoria": "conocimiento", "rol": "Universidad del Trabajo del Uruguay (formación técnico-profesional). Tiene 5 \"Nodos de Innovación\" (Educativa, Empresarial, Pública, Social, Tecnológica). El nodo de Innovación Empresarial funciona como un \"Banco de Problemas\": empresas reales (muchas del Parque Tecnológico Industrial del Cerro) presentan un desafío concreto, que estudiantes de UTU resuelven como su proyecto de egreso.", "link": "https://innovacion.utu.edu.uy/", "tambien_en": []}, {"actor": "Centro Ithaka (UCU)", "categoria": "incubacion", "rol": "Centro de emprendimientos e innovación de la Universidad Católica. Apoya emprendimientos que ya pasaron la etapa de validación y están en etapa semilla, con solución sustentable, escalable y valor diferencial. Opera en modo ventanilla abierta. (Cobertura: Montevideo, Maldonado, Salto.)", "link": "http://ithaka.ucu.edu.uy\n\nithaka@ucu.edu.uy", "tambien_en": []}, {"actor": "CIE BIO (UTEC + CIE ORT)", "categoria": "incubacion", "rol": "Alianza entre el Centro Biotecnológico de Investigación e Innovación (CBI+I), UTEC y el CIE de la Universidad ORT. Apoya emprendimientos de base biotecnológica en preincubación e incubación, con sensibilización y formación en cultura emprendedora del sector biotec. (Cobertura: Montevideo.)", "link": "http://www.cbii.com.uy/sitio/index.php/postula", "tambien_en": []}, {"actor": "CIE ORT (Universidad ORT)", "categoria": "incubacion", "rol": "Centro de Innovación y Emprendimientos de la Universidad ORT. Apoya proyectos en etapa de pre-incubación e incubación; requiere que al menos un integrante del equipo sea estudiante o graduado de ORT. Espacio de trabajo de más de 150m². (Cobertura: Montevideo.)", "link": "https://cie.ort.edu.uy/postula-tu-idea", "tambien_en": []}, {"actor": "Endeavor", "categoria": "incubacion", "rol": "Red global de apoyo a emprendedores de alto impacto, con oficina en Uruguay. Selecciona emprendedores mediante paneles internacionales y los acompaña con mentorías, redes de contacto y el Fondo Endeavor Catalyst (inversión). Programas propios: \"Pasaporte Emprendedor\" (internacionalización, con apoyo de LATU) y \"Scale Up by Endeavor\". Entre sus emprendedores en Uruguay: Prex, Trafilea, dLocal, Nowports.", "link": "https://uruguay.endeavor.org/", "tambien_en": []}, {"actor": "Fundación Da Vinci", "categoria": "incubacion", "rol": "Incubadora regional para emprendimientos en etapas tempranas con solución ya validada y mérito innovador o valor diferencial. Sede operativa principal en Montevideo, con presencia también en Buenos Aires, Medellín y Santiago de Chile. (Cobertura: Montevideo (sede principal); también Buenos Aires, Medellín, Santiago de Chile.)", "link": "http://www.daVinci.lat", "tambien_en": []}, {"actor": "GEPIAN", "categoria": "incubacion", "rol": "Incubadora física multipropósito enfocada en el norte del país. Especializada en emprendimientos de base industrial (manufactura avanzada), turismo de intereses especiales, economía digital e industrias creativas, con foco en sostenibilidad y generación de empleo de calidad. (Cobertura: Salto (norte del país).)", "link": "http://www.gepian.com.uy\n\ncontacto@gepian.com.uy — Tel. 47332425", "tambien_en": []}, {"actor": "IncubaElectro", "categoria": "incubacion", "rol": "Incubadora de emprendimientos de base tecnológica en electrónica, IoT y robótica. Programa de 12 meses, financia hasta $150.000 no reembolsables sin ceder equity, con laboratorio de prototipado en LATU e infraestructura cloud de ANTEL. Alianza MIEM + LATU + ANTEL.", "link": "https://www.incubaelectro.uy/", "tambien_en": []}, {"actor": "Ingenio", "categoria": "incubacion", "rol": "Incubadora de empresas de base tecnológica del LATU, la primera del país (creada en 2001, junto con FOMIN-BID). Apoyo académico de la Universidad ORT y patrocinio de ANII desde 2009. Exige que el equipo ya tenga un prototipo o MVP con señales iniciales de validación de mercado (no trabaja en etapa de idea). En sus 25 años: 250 startups incubadas, 120 activas, 2.100 empleos generados, US$145 millones facturados en conjunto.", "link": "https://www.latu.org.uy/es/enlaces-externos/ingenio", "tambien_en": []}, {"actor": "Khem BIO (Polo Tecnológico de Pando)", "categoria": "incubacion", "rol": "Plataforma de la incubadora Khem especializada en emprendimientos biotecnológicos. Ofrece infraestructura de laboratorio y oficinas, mentorías técnicas y empresariales, asistencia jurídica, patrocinio para acceder a capital semilla y redes de contacto nacionales e internacionales. (Cobertura: Canelones (Pando).)", "link": "http://www.khem.org.uy/es/", "tambien_en": []}, {"actor": "Rabbit", "categoria": "incubacion", "rol": "Incubadora de empresas tecnológicas con foco específico en hardware. Apoya emprendimientos en primera etapa de crecimiento con un programa de 6 meses; evalúa aplicaciones durante todo el año. (Cobertura: Montevideo.)", "link": "http://wearerabbit.com\n\nincubadora@wearerabbit.com", "tambien_en": []}, {"actor": "Socialab Uruguay", "categoria": "incubacion", "rol": "Aceleradora de innovación social y ambiental con 10 años de trabajo en Uruguay. Lideró 90 programas de impacto, realizó 29 consultorías, apoyó a más de 700 emprendimientos de impacto y facilitó más de USD 1.214.000 (vía premios, capital semilla y fondos estatales). Trabaja tanto con emprendedores individuales como con empresas que buscan incorporar innovación social a su estrategia.", "link": "https://www.socialaburuguay.com/", "tambien_en": []}, {"actor": "ThalesLab", "categoria": "incubacion", "rol": "Incubadora y Company Builder para startups y spin-offs tecnológicos de alto potencial en etapas tempranas. Cuenta con apoyo de ANII y un fondo de co-inversión propio para blockchain y vehículos autónomos de pequeño porte para agro e industria. Apoya emprendimientos nacionales e internacionales. (Cobertura: Montevideo.)", "link": "http://www.thaleslab.com", "tambien_en": []}, {"actor": "UDE - Emprendimientos", "categoria": "incubacion", "rol": "Unidad de Emprendimientos de la Universidad de la Empresa (UDE). Es Institución Patrocinadora de Emprendimientos (IPE) ante ANDE y ANII — puede postular ideas o emprendimientos a sus programas en Montevideo, Maldonado y Colonia. Ofrece asesoramiento a estudiantes, egresados y público en general: validación de ideas, desarrollo (Capital Semilla ANDE/ANII) y aceleración de empresas con mentores del ecosistema empresarial.", "link": "https://ude.edu.uy/emprendimientos/", "tambien_en": []}, {"actor": "UM - Initium", "categoria": "incubacion", "rol": "Initium — Centro de Liderazgo, Emprendimientos e Innovación de la Universidad de Montevideo (UM). Ofrece cursos, seminarios y talleres de liderazgo e innovación, mentorías a emprendimientos (con o sin fines de lucro, incluso para personas ajenas a la UM) y coaching InCompany a organizaciones mediante Design Thinking y Life Design. Organiza eventos como LOOP (semana de innovación, junto a UCUDAL, CLAEH, UTEC y ORT) y UM Connects.", "link": "https://www.um.edu.uy/initium", "tambien_en": []}, {"actor": "CENTRO TECNOLÓGICO FORESTAL MADERERO (CTFM)", "categoria": "parques", "rol": "Busca promover la articulación y coordinación de todos los actores de la cadena forestal-maderera, identificando desafíos y buscando soluciones innovadoras.", "link": "https://ctfm.uy/", "tambien_en": []}, {"actor": "Parque Científico y Tecnológico de Pando (PCTP)", "categoria": "parques", "rol": "Actor clave en gestión de la innovación. \nEl PCTP ha diseñado e implementado el Modelo de Aceleración de la Innovación (MAI ®), para la gestión de proyectos de investigación, desarrollo e innovación (I+D+i).", "link": "https://pctp.org.uy/servicios/\nPolo Tecnológico: https://polotecnologico.fq.edu.uy", "tambien_en": ["incubacion"]}, {"actor": "Parque Tecnológico Industrial del Cerro (PTI-C)", "categoria": "parques", "rol": "Parque científico-tecnológico ubicado en el Cerro, Montevideo. Es gestionado por la Intendencia de Montevideo. Hoy reúne unas 70 empresas industriales, logísticas y tecnológicas en 20 hectáreas. Cuenta con incubadora propia, un Laboratorio de Fabricación Digital y, desde 2026, el Nodo de Innovación de UTU. ", "link": "https://www.gub.uy/ministerio-industria-energia-mineria/comunicacion/noticias/pti-lanzo-su-nuevo-plan-estrategico-consolida-su-rol-polo-productivo", "tambien_en": []}, {"actor": "Paysandú Innova", "categoria": "parques", "rol": "Formación, Incubación, Infraestructura, Articulación. Proyecto impulsado por la Intendencia de Paysandú, orientado a consolidar a Paysandú como centro de formación en tecnologías de la información y potenciar el emprendimiento vinculado a TI en el departamento.", "link": "https://paysanduinnova.uy", "tambien_en": ["incubacion", "politica"]}, {"actor": "Red de Innovación Rivera-Livramento (Área B)", "categoria": "parques", "rol": "Área B – Ecosistema Binacional de Innovación: articula emprendedores, empresas e instituciones de Uruguay y Brasil para impulsar proyectos innovadores y alianzas estratégicas en la región fronteriza. Promueve la cultura emprendedora mediante formación y apoyo a iniciativas, integrando innovación, crecimiento económico y sostenibilidad.", "link": "https://www.areabinacional.org/", "tambien_en": []}, {"actor": "Salto Innova", "categoria": "parques", "rol": "Programa de innovación y desarrollo del Gobierno de Salto (Intendencia). Trabaja en 3 líneas: incubación de emprendimientos (idea a modelo de negocio validado), aceleración de empresas en crecimiento, e innovación y conocimiento (conecta academia, empresa y territorio). Ayuda a canalizar postulaciones a Semilla ANDE y VIN-ANII. Articula con OPP, ANDE, ANII, MIEM, UTEC, UdelaR Litoral Norte, UCU, entre otros.", "link": "https://www.innovacionydesarrollosalto.org/saltoinnova", "tambien_en": ["incubacion", "politica"]}, {"actor": "ANTEL", "categoria": "camaras", "rol": "Empresa estatal de telecomunicaciones. Opera el Open Digital Lab (ODL/AODL), su propio laboratorio de innovación abierta para validar tecnologías emergentes (5G, Edge Computing). Socios fundadores: Antel, MIEM, ANII, LATU y CUTI. Conecta empresas con desafíos tecnológicos (\"Problem Owners\") con startups TI que puedan resolverlos, con acompañamiento estratégico y talleres de descubrimiento. ", "link": "https://antel.com.uy/web/odl/lab", "tambien_en": ["incubacion"]}, {"actor": "CIU — Cámara de Industrias", "categoria": "camaras", "rol": "Proyecto clave en innovación: IMPULSA INDUSTRIA.\nProyecto ejecutado por la Cámara de Industrias del Uruguay (CIU) y financiado por el Instituto Nacional de Empleo y Formación Profesional (INEFOP), que brinda servicios novedosos en el país para promover la innovación y sostenibilidad de las Mipymes industriales y el crecimiento de nuevas empresas. \nProyecto relevante capacitación, diagnóstico y AT: Avanza Pymes desarrollado con LATU. Foco en 3 cadenas de valor: Alimentos, Forestal Maderero y Metálmecanico.  \nApoyo a emprendimientos: VIN, Semilla, Emprendimientos Innovadores ", "link": "Impulsa Industria: https://impulsaindustria.com.uy/\nTécnicos referentes: https://impulsaindustria.com.uy/somos-impulsa/\nAvanza Pymes: https://avanzamypes.org.uy/\nSitio de la Cámara: https://ciu.com.uy", "tambien_en": ["incubacion"]}, {"actor": "CUTI — Cámara Uruguaya de TI", "categoria": "camaras", "rol": "Tiene una comisión de trabajo específica de 'Innovación & Transversalidad' dentro de su estructura. Gestiona el Observatorio TI, que genera conocimiento sectorial, y administra 'Uruguay Technology' (marca sectorial impulsada por Uruguay XXI) para visibilidad internacional del sector tecnológico.", "link": "https://cuti.org.uy", "tambien_en": []}, {"actor": "AI for Good Lab", "categoria": "camaras", "rol": "IA for Good - Microsoft / Gobierno de Uruguay. Es el primero de América del Sur y tiene el objetivo de impulsar soluciones de inteligencia artificial con impacto público y social. La  iniciativa busc acelarar el desarrollo y la puesta en producción de soluciones de IA con impacto en sostenibilidad, acción humanitaria, salud y preservación cultural, fortaleciendo capacidades locales mediante transferencia de conocimiento. Coordinadora: Elianne Elbaum. ", "link": "", "tambien_en": ["incubacion"]}, {"actor": "ImpactHub", "categoria": "camaras", "rol": "Nodo de Montevideo de la red global Impact Hub (100+ comunidades en 60+ países). Ofrece programas de apoyo a emprendimientos y conexiones, con foco en innovación alineada a los Objetivos de Desarrollo Sostenible (ODS). ", "link": "https://montevideo.impacthub.net/", "tambien_en": ["incubacion"]}, {"actor": "RIL (Red de Innovación Local)", "categoria": "camaras", "rol": "Nodo uruguayo de la Red de Innovación Local (RIL), una red regional nacida en Argentina en 2014 que trabaja con gobiernos locales de más de 500 ciudades en 14 países de Iberoamérica. Fortalece la gestión pública municipal en 3 áreas: Innovación Pública, Herramientas de Gestión y Networking — conecta intendencias entre sí para compartir soluciones y acelerar políticas públicas innovadoras. ", "link": "https://www.instagram.com/riluruguay/", "tambien_en": []}, {"actor": "Sistema B Uruguay", "categoria": "camaras", "rol": "Promueve el movimiento de \"Empresas B\" (certificación de triple impacto: social, ambiental y económico) en Uruguay. Ofrece programas de medición de impacto (\"Mide lo que importa\", \"Mejores para Uruguay\") como paso previo a la certificación, y respalda el marco legal de la Ley BIC. ", "link": "https://www.sistemab.org/uruguay/", "tambien_en": []}, {"actor": "UTE", "categoria": "camaras", "rol": "Empresa estatal de energía eléctrica. Participa como socia en instrumentos de innovación vinculados al sector energético, como el Fondo Sectorial de Energía (ANII/MIEM/UTE/ANCAP), financiando investigación e innovación en energía.", "link": "https://www.ute.com.uy/", "tambien_en": []}, {"actor": "URUCAP", "categoria": "camaras", "rol": "La Asociación Uruguaya de Capital Privado URUCAP, conecta capital, tiene como propósito integrar y desarrollar la industria de Capital Privado, Capital de riesgo e inversión semilla, generando más oportunidades para inversores y emprendedores, con el objetivo de generar un impacto positivo.", "link": "https://www.urucap.org/", "tambien_en": []}]}
+</script>
+
+<script>
+const DATA = JSON.parse(document.getElementById('data-json').textContent);
+
+const ESTADIOS = [
+  {
+    key: "I", 
+    nombre: "Incipiente", 
+    entrada: "Sensibilizar: abrir una primera conversación sobre una mejora concreta que le resulte relevante hoy, sin necesidad de nombrar metodologías todavía.", 
+    riesgo: "Introducir herramientas antes de que exista un canal mínimo para sostenerlas puede generar rechazo y desaprovechar el interés inicial."
+  },
+  {
+    key: "D", 
+    nombre: "En desarrollo", 
+    entrada: "Pasar de probar a aplicar una herramienta de forma recurrente, animarse a prototipar en pequeña escala y acompañar un ciclo completo de construir–medir–aprender.", 
+    riesgo: "Avanzar hacia la postulación a fondos sin haber afianzado el método puede debilitar la experiencia."
+  },
+  {
+    key: "C", 
+    nombre: "Consolidado", 
+    entrada: "Activar los vínculos ya existentes para preparar y postular a un instrumento de apoyo (ANDE/ANII/MIEM, entre otros), sosteniendo las metodologías como parte natural del trabajo.", 
+    riesgo: "Sostener un nivel de desafío acorde: un acompañamiento que se mantenga en lo básico puede frenar el potencial."
+  }
+];
+
+let currentStage = "I"; 
+let currentCat = "institucional"; 
+let currentModo = "estadio"; 
+
+function sourceForCat(){ return currentCat === "institucional" ? DATA.instrumentos : DATA.herramientas; }
+function countForStage(key){ return sourceForCat().filter(i => i.estadios.includes(key)).length; }
+
+function renderStepper(){
+  const el = document.getElementById('stepper');
+  el.innerHTML = '';
+  ESTADIOS.forEach((s, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'step-btn' + (s.key===currentStage ? ' active' : '');
+    const n = countForStage(s.key);
+    btn.innerHTML = `
+      <div class="left-info">
+        <span class="num">${idx+1}</span>
+        <span class="name">${s.nombre}</span>
+      </div>
+      <span class="badge-count">${n} ${currentCat==='institucional'?'inst.':'herram.'}</span>
+    `;
+    btn.onclick = () => { currentStage = s.key; renderAll(); };
+    el.appendChild(btn);
+  });
+}
+
+function renderCatTabs(){
+  document.querySelectorAll('.cat-tab').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.cat === currentCat);
+  });
+  document.getElementById('filtersInst').style.display = currentCat==="institucional" ? "flex" : "none";
+  document.getElementById('filtersMeto').style.display = currentCat==="metodologica" ? "flex" : "none";
+}
+
+function renderStageDetail(){
+  const s = ESTADIOS.find(x=>x.key===currentStage);
+  const el = document.getElementById('stageDetail');
+  el.innerHTML = `
+    <div class="col"><strong>Punto de entrada recomendado:</strong> <div class="val">${s.entrada}</div></div>
+    <div class="col"><strong>Riesgo de esta etapa:</strong> <div class="val">${s.riesgo}</div></div>
+  `;
+}
+
+function populateSelects(){
+  const usos = [...new Set(DATA.instrumentos.flatMap(i=>i.usos||[]))].sort();
+  const tipos = [...new Set(DATA.instrumentos.map(i=>i.tipo))].sort();
+  const selUso = document.getElementById('filterUso');
+  const selTipo = document.getElementById('filterTipo');
+
+  selUso.innerHTML = '<option value="">Uso: todos</option>';
+  selTipo.innerHTML = '<option value="">Tipo: todos</option>';
+
+  usos.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; selUso.appendChild(o); });
+  tipos.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; selTipo.appendChild(o); });
+}
+
+function renderGrid(){
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyMsg');
+  let items = sourceForCat();
+  let busquedaGlobal = false;
+
+  if(currentCat === "institucional"){
+    const search = document.getElementById('searchBox').value.trim().toLowerCase();
+    const fUso = document.getElementById('filterUso').value;
+    const fTipo = document.getElementById('filterTipo').value;
+    if(search){
+      busquedaGlobal = true;
+      items = items.filter(i => (i.nombre+' '+i.inst+' '+i.obj + ' ' + (i.acciones ? i.acciones.join(' ') : '')).toLowerCase().includes(search));
+    } else {
+      items = items.filter(i => i.estadios.includes(currentStage));
+    }
+    if(fUso){ items = items.filter(i=>(i.usos||[]).includes(fUso)); }
+    if(fTipo){ items = items.filter(i=>i.tipo===fTipo); }
+    // countPill eliminado por indicacion del usuario (confundia con un total)
+  } else {
+    const searchM = document.getElementById('searchBoxM').value.trim().toLowerCase();
+    if(searchM){
+      busquedaGlobal = true;
+      items = items.filter(i => (i.nombre+' '+i.fuente+' '+i.obj + ' ' + (i.aspectos ? i.aspectos.join(' ') : '')).toLowerCase().includes(searchM));
+    } else {
+      items = items.filter(i => i.estadios.includes(currentStage));
+    }
+    document.getElementById('countPillM').textContent = `${items.length} herram.`;
+  }
+
+  grid.innerHTML = '';
+  if(items.length===0){
+    empty.innerHTML = 'Ningún elemento coincide con los filtros o la búsqueda aplicada.';
+    empty.style.display='block';
+  } else { 
+    empty.style.display='none'; 
+  }
+
+  const INST_COLOR = {"ANDE":"#2382AD","ANII":"#3D3B7F","MIEM":"#EB901F"};
+  function colorForInst(inst){
+    if(!inst) return null;
+    const key = Object.keys(INST_COLOR).find(k => inst.includes(k));
+    return key ? INST_COLOR[key] : null;
+  }
+
+  items.forEach(i=>{
+    const card = document.createElement('div');
+    card.className = 'card cat-' + currentCat;
+    const bc = colorForInst(i.inst);
+    if(bc) card.style.borderTopColor = bc;
+    const otraEtapa = busquedaGlobal && !i.estadios.includes(currentStage);
+    const nombreEtapa = otraEtapa ? (ESTADIOS.find(e=>i.estadios.includes(e.key))||{}).nombre : null;
+    card.innerHTML = `
+      ${nombreEtapa ? `<div class="chip" style="background:#FEF3C7; color:#92400E; font-weight:700; margin-bottom:6px; display:inline-block;">Etapa: ${nombreEtapa}</div>` : ''}
+      <div class="inst-tag">${i.inst || i.fuente}</div>
+      <div class="chips" style="margin-top:2px; margin-bottom:6px;">
+        ${i.usos ? i.usos.map(u=>`<span class="chip chip-tipo">${u}</span>`).join('') : `<span class="chip chip-tipo">${i.tipo || 'Metodología Ágil'}</span>`}
+      </div>
+      <h3>${i.nombre}</h3>
+      <div class="obj">${i.obj}</div>
+
+      ${(i.acceso || i.alcance || (i.usos && i.tipo)) ? `<div style="font-size:12px; color:var(--muted); margin-bottom:8px;">
+        ${i.usos && i.tipo ? `${i.tipo}${i.acceso ? ' · ' : ''}` : ''}${i.acceso ? `${i.acceso}` : ''}${i.alcance ? ` · ${i.alcance}` : ''}
+      </div>` : ''}
+
+      ${i.acciones ? `<div class="aspectos-label">Qué se puede hacer:</div><ul class="aspectos">${i.acciones.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+      ${i.aspectos ? `<div class="aspectos-label">Aspectos relevantes:</div><ul class="aspectos">${i.aspectos.map(a=>`<li>${a}</li>`).join('')}</ul>` : ''}
+
+      <div class="foot">
+        <a class="linkbtn" href="${i.link}" target="_blank">Ver documentación / Sitio web ↗</a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function parseLinksYContactos(raw){
+  if (!raw) return { links: [], contactos: [] };
+  const lineas = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const links = [];
+  const contactos = [];
+  for (const linea of lineas) {
+    const m = linea.match(/(https?:\/\/\S+)/);
+    if (m) {
+      const url = m[1].replace(/[.,;]+$/, '');
+      let label = linea.slice(0, m.index).replace(/[:.]\s*$/, '').trim();
+      if (!label) {
+        try { label = new URL(url).hostname.replace(/^www\./, ''); }
+        catch(e) { label = 'Sitio'; }
+      }
+      links.push({ label, url });
+    } else {
+      contactos.push(linea);
+    }
+  }
+  return { links, contactos };
+}
+
+function linkificarEmail(texto){
+  return texto.replace(/([\w.+-]+@[\w-]+\.[\w.-]+)/g, '<a href="mailto:$1">$1</a>');
+}
+
+function renderActores(){
+  const search = document.getElementById('searchBoxA').value.trim().toLowerCase();
+  const capas = ["politica", "conocimiento", "incubacion", "parques", "camaras"];
+  let totalMatch = 0;
+  const CAPA_COLOR = {"politica":"#1F4E5F","conocimiento":"#2382AD","incubacion":"#EB901F","parques":"#359D85","camaras":"#8A3E52"};
+  const CAT_NOMBRE = {"politica":"Política pública y agencias","conocimiento":"Generación de conocimiento","incubacion":"Incubación y aceleración","parques":"Parques y polos territoriales","camaras":"Cámaras, redes e innovación abierta"};
+
+  capas.forEach(capa => {
+    const laneGrid = document.getElementById(`grid-${capa}`);
+    let items = (DATA.actores || []).filter(a => a.categoria === capa);
+
+    if(search){
+      items = items.filter(a => (a.actor + ' ' + a.rol).toLowerCase().includes(search));
+    }
+
+    totalMatch += items.length;
+    laneGrid.innerHTML = '';
+
+    items.forEach(a => {
+      const card = document.createElement('div');
+      card.className = 'card cat-actor';
+      card.style.borderTopColor = CAPA_COLOR[a.categoria] || '#10B981';
+      const tambien = (a.tambien_en || []).map(k => `<span class="chip" style="background:#F1F5F9; color:#475569; font-size:10.5px;">También: ${CAT_NOMBRE[k]}</span>`).join(' ');
+
+      let partes = (a.rol || '').split('\n').map(p => p.trim()).filter(p => p.length > 0);
+      // una linea cortada a mitad de una enumeracion (termina en coma) se une con la siguiente
+      const fusionadas = [];
+      for (let i = 0; i < partes.length; i++) {
+        let linea = partes[i];
+        while (linea.endsWith(',') && i + 1 < partes.length) {
+          linea = linea + ' ' + partes[++i];
+        }
+        fusionadas.push(linea);
+      }
+      partes = fusionadas;
+      const parrafoInicial = partes[0] || '';
+      let detalle = partes.slice(1);
+
+      // una linea que arranca con "Proyecto" introduce una iniciativa nueva y propia,
+      // no un detalle de la anterior -> se muestra como parrafo aparte, no como viñeta
+      const esProyectoNuevo = (l) => /^Proyecto\b/i.test(l) && l.includes(':');
+      const proyectosNuevos = detalle.filter(esProyectoNuevo);
+      detalle = detalle.filter(l => !esProyectoNuevo(l));
+      const proyectosHtml = proyectosNuevos.map(p => `<div class="obj" style="margin-top:8px;">${p}</div>`).join('');
+
+      // agrupar: una linea que termina en ":" absorbe como sub-items las lineas
+      // cortas que le siguen (ej. "Programa: url"), hasta la primera linea que no calce
+      const esSubitem = (l) => /^[^:]{2,35}:\s*\S/.test(l) || /^https?:\/\//.test(l);
+      const grupos = [];
+      for (let i = 0; i < detalle.length; i++) {
+        const linea = detalle[i];
+        if (linea.endsWith(':')) {
+          const sub = [];
+          while (i + 1 < detalle.length && esSubitem(detalle[i + 1])) {
+            sub.push(detalle[++i]);
+          }
+          grupos.push({ texto: linea, sub });
+        } else {
+          grupos.push({ texto: linea, sub: [] });
+        }
+      }
+      // si hay un solo bloque de detalle y no tiene sub-items, es un segundo parrafo de prosa, no una lista
+      const detalleHtml = proyectosHtml + ((grupos.length === 1 && grupos[0].sub.length === 0)
+        ? `<div class="obj" style="margin-top:8px;">${grupos[0].texto}</div>`
+        : grupos.length
+          ? `<ul class="rol-detalle">${grupos.map(g => `<li>${g.texto}${g.sub.length ? `<ul class="rol-subdetalle">${g.sub.map(s => `<li>${s}</li>`).join('')}</ul>` : ''}</li>`).join('')}</ul>`
+          : '');
+
+      // la celda de sitio web a veces trae mas de un link real (distintos programas del
+      // mismo actor) mezclado con datos de contacto (nombre, mail, telefono) que no son links
+      const { links, contactos } = parseLinksYContactos(a.link);
+      const linksHtml = links.length === 0 ? '' :
+        links.length === 1
+          ? `<a class="linkbtn" href="${links[0].url}" target="_blank">Ir al sitio del actor ↗</a>`
+          : links.map(l => `<a class="linkbtn" href="${l.url}" target="_blank">${l.label} ↗</a>`).join('');
+      const contactosHtml = contactos.length
+        ? `<div class="rol-contacto">${contactos.map(linkificarEmail).join('<br>')}</div>` : '';
+
+      card.innerHTML = `
+        <h3>${a.actor}</h3>
+        <div class="obj" style="margin-top:6px;">${parrafoInicial}</div>
+        ${detalleHtml}
+        ${tambien ? `<div class="chips" style="margin-top:8px;">${tambien}</div>` : ''}
+        ${contactosHtml}
+        <div class="foot" style="display:flex; flex-wrap:wrap; gap:6px;">
+          ${linksHtml}
+        </div>
+      `;
+      laneGrid.appendChild(card);
+    });
+
+    document.getElementById(`lane-${capa}`).style.display = (items.length === 0 && search) ? 'none' : 'block';
+  });
+
+  document.getElementById('countPillA').textContent = `${totalMatch} actores`;
+  document.getElementById('emptyMsgA').style.display = (totalMatch === 0) ? 'block' : 'none';
+}
+
+function switchCat(catName){
+  currentCat = catName;
+  renderAll();
+}
+
+function renderAll(){
+  renderStepper();
+  renderCatTabs();
+  renderStageDetail();
+  renderGrid();
+  renderActores();
+}
+
+function renderModo(){
+  document.querySelectorAll('.modo-btn').forEach(b=>b.classList.toggle('active', b.dataset.modo===currentModo));
+  document.getElementById('modoEstadio').style.display = currentModo==="estadio" ? "" : "none";
+  document.getElementById('modoActores').style.display = currentModo==="actores" ? "" : "none";
+}
+
+// Event Listeners
+document.getElementById('searchBox').addEventListener('input', renderGrid);
+document.getElementById('filterUso').addEventListener('change', renderGrid);
+document.getElementById('filterTipo').addEventListener('change', renderGrid);
+document.getElementById('searchBoxM').addEventListener('input', renderGrid);
+document.getElementById('searchBoxA').addEventListener('input', renderActores);
+
+document.querySelectorAll('.cat-tab').forEach(btn=>{
+  btn.addEventListener('click', () => { currentCat = btn.dataset.cat; renderAll(); });
+});
+
+document.querySelectorAll('.modo-btn').forEach(btn=>{
+  btn.addEventListener('click', () => { 
+    currentModo = btn.dataset.modo; 
+    renderModo(); 
+  });
+});
+
+populateSelects();
+renderAll();
+</script>
+
+</body>
+</html>
